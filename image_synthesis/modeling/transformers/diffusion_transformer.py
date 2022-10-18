@@ -269,8 +269,11 @@ class DiffusionTransformer(nn.Module):
     def p_pred(self, log_x, cond_emb, t):             # if x0, first p(x0|xt), than sum(q(xt-1|xt,x0)*p(x0|xt))
         if self.parametrization == 'x0':
             log_x_recon = self.cf_predict_start(log_x, cond_emb, t)
+            torch.save(log_x_recon, f"/content/orig-out/log_x_recon-{t[0]}.pt")
+
             log_model_pred = self.q_posterior(
                 log_x_start=log_x_recon, log_x_t=log_x, t=t)
+            torch.save(log_model_pred, f"/content/orig-out/log_model_pred-{t[0]}.pt")
         elif self.parametrization == 'direct':
             log_model_pred = self.predict_start(log_x, cond_emb, t)
         else:
@@ -322,6 +325,8 @@ class DiffusionTransformer(nn.Module):
             # Gumbel sample
             out = self.log_sample_categorical(model_log_prob)
             sampled = [1024] * log_x.shape[0]
+
+        torch.save(out, f"/content/orig-out/out-{t[0]}.pt")
 
         if to_sample is not None:
             return out, sampled

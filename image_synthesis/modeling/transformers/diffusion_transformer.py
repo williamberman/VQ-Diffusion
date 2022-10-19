@@ -217,31 +217,31 @@ class DiffusionTransformer(nn.Module):
         else:
             out = self.transformer(x_t, cond_emb, t)
 
-        print('\n')
-        print('out')
-        print(out)
+        # print('\n')
+        # print('out')
+        # print(out)
 
         assert out.size(0) == x_t.size(0)
         assert out.size(1) == self.num_classes-1
         assert out.size()[2:] == x_t.size()[1:]
         log_pred = F.log_softmax(out.double(), dim=1).float()
         torch.save(log_pred, f"/content/orig-out/log_pred-0-{t[0]}.pt")
-        print('\n')
-        print('log_pred')
-        print(log_pred)
+        # print('\n')
+        # print('log_pred')
+        # print(log_pred)
         batch_size = log_x_t.size()[0]
         if self.zero_vector is None or self.zero_vector.shape[0] != batch_size:
             self.zero_vector = torch.zeros(batch_size, 1, self.content_seq_len).type_as(log_x_t)- 70
         log_pred = torch.cat((log_pred, self.zero_vector), dim=1)
         torch.save(log_pred, f"/content/orig-out/log_pred-1-{t[0]}.pt")
-        print('\n')
-        print('log_pred')
-        print(log_pred)
+        # print('\n')
+        # print('log_pred')
+        # print(log_pred)
         log_pred = torch.clamp(log_pred, -70, 0)
         torch.save(log_pred, f"/content/orig-out/log_pred-2-{t[0]}.pt")
-        print('\n')
-        print('log_pred')
-        print(log_pred)
+        # print('\n')
+        # print('log_pred')
+        # print(log_pred)
 
         return log_pred
     
@@ -287,10 +287,10 @@ class DiffusionTransformer(nn.Module):
         torch.save(cond_emb, f"/content/orig-out/cond_emb-{t[0]}.pt")
         if self.parametrization == 'x0':
             log_x_recon = self.cf_predict_start(log_x, cond_emb, t)
-            print('\n')
-            print('log_x_recon')
-            print(log_x_recon)
-            print("**********")
+            # print('\n')
+            # print('log_x_recon')
+            # print(log_x_recon)
+            # print("**********")
             torch.save(log_x_recon, f"/content/orig-out/log_x_recon-{t[0]}.pt")
 
             log_model_pred = self.q_posterior(

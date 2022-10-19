@@ -267,6 +267,7 @@ class DiffusionTransformer(nn.Module):
         return torch.clamp(log_EV_xtmin_given_xt_given_xstart, -70, 0)
 
     def p_pred(self, log_x, cond_emb, t):             # if x0, first p(x0|xt), than sum(q(xt-1|xt,x0)*p(x0|xt))
+        torch.save(log_x, f"/content/orig-out/log_x-{t[0]}.pt")
         if self.parametrization == 'x0':
             log_x_recon = self.cf_predict_start(log_x, cond_emb, t)
             torch.save(log_x_recon, f"/content/orig-out/log_x_recon-{t[0]}.pt")

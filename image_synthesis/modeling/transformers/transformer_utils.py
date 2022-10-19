@@ -438,6 +438,7 @@ class Text2ImageTransformer(nn.Module):
                 emb, att_weight = checkpoint(self.blocks[block_idx], emb, cond_emb, t.cuda())
         logits = self.to_logits(emb) # B x (Ld+Lt) x n
         out = rearrange(logits, 'b l c -> b c l')
+        torch.save(out, f"/content/orig-out/transformer_logits_orig-{t[0]}.pt")
         return out
 
 class Condition2ImageTransformer(nn.Module):

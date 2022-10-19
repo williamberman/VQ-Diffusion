@@ -439,6 +439,9 @@ class Text2ImageTransformer(nn.Module):
         logits = self.to_logits(emb) # B x (Ld+Lt) x n
         out = rearrange(logits, 'b l c -> b c l')
         torch.save(out, f"/content/orig-out/transformer_logits_orig-{t[0]}.pt")
+        print('\n')
+        print('out')
+        print(out)
         return out
 
 class Condition2ImageTransformer(nn.Module):

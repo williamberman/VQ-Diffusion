@@ -221,11 +221,14 @@ class DiffusionTransformer(nn.Module):
         assert out.size(1) == self.num_classes-1
         assert out.size()[2:] == x_t.size()[1:]
         log_pred = F.log_softmax(out.double(), dim=1).float()
+        torch.save(log_pred, f"/content/orig-out/log_pred-0-{t[0]}.pt")
         batch_size = log_x_t.size()[0]
         if self.zero_vector is None or self.zero_vector.shape[0] != batch_size:
             self.zero_vector = torch.zeros(batch_size, 1, self.content_seq_len).type_as(log_x_t)- 70
         log_pred = torch.cat((log_pred, self.zero_vector), dim=1)
+        torch.save(log_pred, f"/content/orig-out/log_pred-1-{t[0]}.pt")
         log_pred = torch.clamp(log_pred, -70, 0)
+        torch.save(log_pred, f"/content/orig-out/log_pred-2-{t[0]}.pt")
 
         return log_pred
     

@@ -358,8 +358,26 @@ class DiffusionTransformer(nn.Module):
     def log_sample_categorical(self, logits):           # use gumbel to sample onehot vector from log probability
         uniform = torch.rand_like(logits)
         gumbel_noise = -torch.log(-torch.log(uniform + 1e-30) + 1e-30)
-        sample = (gumbel_noise + logits).argmax(dim=1)
+        noised = gumbel_noise + logits
+        sample = noised.argmax(dim=1)
         log_sample = index_to_log_onehot(sample, self.num_classes)
+
+        num_masked = (sample == self.num_classes - 1).count_nonzero()
+
+        print()
+        print("***********")
+        print()
+        print(f"num masked {num_masked}")
+        print()
+        print("unnoised mask probabilities")
+        print(logits[0, -1, :].exp())
+        print()
+        print("noised mask probabilities")
+        print(noised[0, -1, :].exp())
+        print()
+        print("***********")
+        print()
+
         return log_sample
 
     def q_sample(self, log_x_start, t):                 # diffusion step, q(xt|x0) and sample xt

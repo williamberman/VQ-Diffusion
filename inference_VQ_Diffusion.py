@@ -137,12 +137,17 @@ class VQ_Diffusion():
         # save results
         content = model_out['content']
         content = content.permute(0, 2, 3, 1).to('cpu').numpy().astype(np.uint8)
+        # XXX
+        images = []
         for b in range(content.shape[0]):
             cnt = b
             save_base_name = '{}'.format(str(cnt).zfill(6))
             save_path = os.path.join(save_root_, save_base_name+'.png')
             im = Image.fromarray(content[b])
+            # XXX
+            images.append(im)
             im.save(save_path)
+        return images
 
 
 if __name__ == '__main__':

@@ -583,6 +583,9 @@ class DiffusionTransformer(nn.Module):
             else:
                 cond_emb = None
 
+        # XXX
+        assert start_step == 0
+
         if start_step == 0:
             # use full mask sample
             zero_logits = torch.zeros((batch_size, self.num_classes-1, self.shape),device=device)
@@ -590,12 +593,17 @@ class DiffusionTransformer(nn.Module):
             mask_logits = torch.cat((zero_logits, one_logits), dim=1)
             log_z = torch.log(mask_logits)
             start_step = self.num_timesteps
+
             with torch.no_grad():
                 for diffusion_index in range(start_step-1, -1, -1):
                     t = torch.full((batch_size,), diffusion_index, device=device, dtype=torch.long)
                     sampled = [0] * log_z.shape[0]
+                    i = 0
                     while min(sampled) < self.n_sample[diffusion_index]:
+                        assert i == 0
                         log_z, sampled = self.p_sample(log_z, cond_emb, t, sampled, self.n_sample[diffusion_index])     # log_z is log_onehot
+                        i += 1
+                    torch.save(log_z.argmax(1), f"/content/e2e_latents_out_orig/{diffusion_index}.pt")
 
         else:
             t = torch.full((batch_size,), start_step-1, device=device, dtype=torch.long)

@@ -172,6 +172,7 @@ class DALLE(nn.Module):
             if abs(self.guidance_scale - 1) < 1e-3:
                 return torch.cat((log_x_recon, self.transformer.zero_vector), dim=1)
             cf_log_x_recon = self.transformer.predict_start(log_x_t, cf_cond_emb.type_as(cond_emb), t)[:, :-1]
+            import pdb; pdb.set_trace()
             log_new_x_recon = cf_log_x_recon + self.guidance_scale * (log_x_recon - cf_log_x_recon)
             log_new_x_recon -= torch.logsumexp(log_new_x_recon, dim=1, keepdim=True)
             log_new_x_recon = log_new_x_recon.clamp(-70, 0)
